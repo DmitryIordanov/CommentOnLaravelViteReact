@@ -1,0 +1,17 @@
+.addCommentForm{
+    width: 500px;
+}
+.addCommentForm input{
+    width: 470px;
+
+    --tw-shadow: none;
+}
+.addCommentForm textarea{
+    height: 50px!important;
+    width: 470px;
+    margin-bottom: 15px;
+    --tw-shadow: none;
+}
+.text-danger{
+    color: red;
+}
