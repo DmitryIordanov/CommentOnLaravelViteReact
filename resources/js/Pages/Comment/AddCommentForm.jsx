@@ -1,6 +1,10 @@
 import React, {useState} from "react";
 import {Button, TextField, CardHeader, CardActions, Typography} from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import Backdrop from '@mui/material/Backdrop';
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
 import { useFormik } from 'formik';
 
 export default function AddCommentForm() {
@@ -40,6 +44,22 @@ export default function AddCommentForm() {
     const randomString = Math.random().toString(36).slice(8);
     const [isCaptcha, setIsCaptcha] = useState(randomString);
     const [text, setText] = useState("");
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 565,
+        borderRadius: 4,
+        bgcolor: 'background.paper',
+        border: '1px solid #96BBE0',
+        boxShadow: 24,
+        p: 4,
+    };
 
     const refreshString = () => {
         setText("");
@@ -64,83 +84,104 @@ export default function AddCommentForm() {
         validateOnMount: false
     });
     return (
-        <form className="addCommentForm" onSubmit={formik.handleSubmit}>
-            <CardHeader title="Add Comment" className="text-center"></CardHeader>
-            <div className="mb-5">
-                <TextField
-                    error={formik.errors.username ? true : false}
-                    id="outlined-basic"
-                    label="Enter your name..."
-                    variant="outlined"
-                    helperText={formik.errors.username ? <Typography className="text-danger">{formik.errors.username}</Typography> : null}
-                    type="text"
-                    name="username"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.username}
-                ></TextField>
-            </div>
-            <div className="mb-5">
-                <TextField
-                    error={formik.errors.email ? true : false}
-                    id="outlined-basic"
-                    label="Enter your email..."
-                    variant="outlined"
-                    helperText={formik.errors.email ? <Typography className="text-danger">{formik.errors.email}</Typography> : null}
-                    type="email"
-                    name="email"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.email}
-                ></TextField>
-            </div>
-            <div className="mb-5">
-                <TextField
-                    id="outlined-basic"
-                    label="Url home page..."
-                    variant="outlined"
-                    type="text"
-                    name="homePage"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.homePage}
-                ></TextField>
-            </div>
-            <div className="mb-5">
-                <TextField
-                    error={formik.errors.content ? true : false}
-                    id="standard-multiline-flexible"
-                    label="Enter your text..."
-                    multiline
-                    variant="outlined"
-                    helperText={formik.errors.content ? <Typography className="text-danger">{formik.errors.content}</Typography> : null}
-                    name="content"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.content}
-                ></TextField>
-            </div>
-            <div className="mb-5">
-                <CardActions>
-                    <div className="h3">{isCaptcha}</div>
-                    <Button
-                        startIcon={<RefreshIcon/>}
-                        onClick={() => refreshString()}
-                    ></Button>
-                </CardActions>
-                <TextField
-                    error={formik.errors.captcha ? true : false}
-                    type="text"
-                    className="w-60"
-                    label="Enter Captcha"
-                    name="captcha"
-                    value={formik.values.captcha}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    helperText={formik.errors.captcha ? <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
-                />
-            </div>
-            <Button variant="contained" type='submit'>Add comment</Button>
-        </form>
+        <>
+            <Button variant="outlined" onClick={handleOpen}>Add Comment</Button>
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+                slotProps={{
+                    backdrop: {
+                        timeout: 500,
+                    },
+                }}
+            >
+                <Fade in={open}>
+                    <Box sx={style}>
+                        <form className="addCommentForm" onSubmit={formik.handleSubmit}>
+                            <CardHeader title="Add Comment" className="text-center"></CardHeader>
+                            <div className="mb-5">
+                                <TextField
+                                    error={formik.errors.username ? true : false}
+                                    id="outlined-basic"
+                                    label="Enter your name..."
+                                    variant="outlined"
+                                    helperText={formik.errors.username ? <Typography className="text-danger">{formik.errors.username}</Typography> : null}
+                                    type="text"
+                                    name="username"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={formik.values.username}
+                                ></TextField>
+                            </div>
+                            <div className="mb-5">
+                                <TextField
+                                    error={formik.errors.email ? true : false}
+                                    id="outlined-basic"
+                                    label="Enter your email..."
+                                    variant="outlined"
+                                    helperText={formik.errors.email ? <Typography className="text-danger">{formik.errors.email}</Typography> : null}
+                                    type="email"
+                                    name="email"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={formik.values.email}
+                                ></TextField>
+                            </div>
+                            <div className="mb-5">
+                                <TextField
+                                    id="outlined-basic"
+                                    label="Url home page..."
+                                    variant="outlined"
+                                    type="text"
+                                    name="homePage"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={formik.values.homePage}
+                                ></TextField>
+                            </div>
+                            <div className="mb-5">
+                                <TextField
+                                    error={formik.errors.content ? true : false}
+                                    id="standard-multiline-flexible"
+                                    label="Enter your text..."
+                                    multiline
+                                    variant="outlined"
+                                    helperText={formik.errors.content ? <Typography className="text-danger">{formik.errors.content}</Typography> : null}
+                                    name="content"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    value={formik.values.content}
+                                ></TextField>
+                            </div>
+                            <div className="mb-5">
+                                <CardActions>
+                                    <Button
+                                        startIcon={<RefreshIcon/>}
+                                        onClick={() => refreshString()}
+                                    ></Button>
+                                    <div className="h3">{isCaptcha}</div>
+                                </CardActions>
+                                <TextField
+                                    error={formik.errors.captcha ? true : false}
+                                    type="text"
+                                    className="w-60"
+                                    label="Enter Captcha"
+                                    name="captcha"
+                                    value={formik.values.captcha}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    helperText={formik.errors.captcha ? <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
+                                />
+                            </div>
+                            <Button variant="contained" type='submit'>Add comment</Button>
+                        </form>
+                    </Box>
+                </Fade>
+            </Modal>
+        </>
     );
 }
