@@ -5,16 +5,18 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
+import axios from "axios";
 import { useFormik } from 'formik';
 
 export default function AddCommentForm() {
+    // Form validation function via formik
     const validate = values => {
         const errors = {};
 
         if (!values.username) {
             errors.username = 'Обязательное поле';
-        } else if (values.username.length > 15) {
-            errors.username = 'Должно быть не более 3 символов.';
+        } else if (values.username.length > 20) {
+            errors.username = 'Должно быть не более 20 символов.';
         } else if (values.username.length < 3) {
             errors.username = 'Должность быть не меньше 3 символов';
         }
@@ -25,12 +27,12 @@ export default function AddCommentForm() {
             errors.email = 'Неверный адрес электронной почты';
         }
 
-        if (!values.content) {
-            errors.content = 'Обязательное поле';
-        } else if (values.content.length > 999) {
-            errors.content = 'Должно быть не более 999 символов';
-        } else if (values.content.length < 10) {
-            errors.content = 'Должность быть не меньше 10 символов';
+        if (!values.text_content) {
+            errors.text_content = 'Обязательное поле';
+        } else if (values.text_content.length > 999) {
+            errors.text_content = 'Должно быть не более 999 символов';
+        } else if (values.text_content.length < 10) {
+            errors.text_content = 'Должность быть не меньше 10 символов';
         }
 
         if (!values.captcha) {
@@ -41,13 +43,20 @@ export default function AddCommentForm() {
 
         return errors;
     };
+    // Random string for captcha
     const randomString = Math.random().toString(36).slice(8);
+    // Captcha output
     const [isCaptcha, setIsCaptcha] = useState(randomString);
+    // User entered text
     const [text, setText] = useState("");
+    // Open modal
     const [open, setOpen] = React.useState(false);
+    // Open modal setOpen true
     const handleOpen = () => setOpen(true);
+    // Open modal setOpen false
     const handleClose = () => setOpen(false);
 
+    // Modal style
     const style = {
         position: 'absolute',
         top: '50%',
@@ -61,24 +70,30 @@ export default function AddCommentForm() {
         p: 4,
     };
 
+    // onClick Button update captcha
     const refreshString = () => {
         setText("");
         setIsCaptcha(Math.random().toString(36).slice(8));
     };
 
+    // Formik function
     const formik = useFormik({
         initialValues: {
             username: '',
             email: '',
-            homePage: '',
-            content: '',
+            home_url: '',
+            text_content: '',
             captcha: ''
         },
         onSubmit: values => {
-            console.log(JSON.stringify(values, null, 2));
+            axios.post('http://localhost:8000/api/comments', JSON.stringify(values), {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
         },
-        isInitialValid: false,
         validate: validate,
+        isInitialValid: false,
         validateOnBlur: false,
         validateOnChange: false,
         validateOnMount: false
@@ -137,24 +152,24 @@ export default function AddCommentForm() {
                                     label="Url home page..."
                                     variant="outlined"
                                     type="text"
-                                    name="homePage"
+                                    name="home_url"
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    value={formik.values.homePage}
+                                    value={formik.values.home_url}
                                 ></TextField>
                             </div>
                             <div className="mb-5">
                                 <TextField
-                                    error={formik.errors.content ? true : false}
+                                    error={formik.errors.text_content ? true : false}
                                     id="standard-multiline-flexible"
                                     label="Enter your text..."
                                     multiline
                                     variant="outlined"
-                                    helperText={formik.errors.content ? <Typography className="text-danger">{formik.errors.content}</Typography> : null}
-                                    name="content"
+                                    helperText={formik.errors.text_content ? <Typography className="text-danger">{formik.errors.text_content}</Typography> : null}
+                                    name="text_content"
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
-                                    value={formik.values.content}
+                                    value={formik.values.text_content}
                                 ></TextField>
                             </div>
                             <div className="mb-5">
