@@ -9,3 +9,7 @@
 
 - Formik
 - Material UI
+- Axios
+- Inertia
+- CKEditor
+- Html-react-parse

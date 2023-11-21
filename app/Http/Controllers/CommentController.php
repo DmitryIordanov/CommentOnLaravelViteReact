@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
+use App\Models\Pictures;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
     public function index(){
         try {
-            $comment = Comment::all();
+            $comment = Comment::paginate(2)->withQueryString();
             return response()->json([
                 'comments' => $comment
             ], 200);
@@ -32,6 +33,23 @@ class CommentController extends Controller
             ]);
             return response()->json([
                 'comments' => $comment
+            ], 200);
+        }catch (\Exception $e){
+            return response()->json([
+                'massage' => $e
+            ], 500);
+        }
+    }
+    public function uploadImage(Request $request){
+        try {
+            $fileName = time().$request->file('image')->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images', $fileName, 'public');
+            $url_image = '/storage/' . $path;
+            Pictures::create([
+                'image_url' => $url_image
+            ]);
+            return response()->json([
+                'image' => $url_image
             ], 200);
         }catch (\Exception $e){
             return response()->json([
