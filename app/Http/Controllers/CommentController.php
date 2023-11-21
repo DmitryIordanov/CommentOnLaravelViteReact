@@ -2,22 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Filters\CommentFilter;
 use App\Http\Requests\CommentRequest;
+use App\Http\Requests\FilterRequest;
 use App\Models\Comment;
 use App\Models\Pictures;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index(){
+    public function index(FilterRequest $request){
         try {
-            $comment = Comment::paginate(2)->withQueryString();
+            $data = $request->validated();
+            $filter = app()->make(CommentFilter::class, ['queryParams' => array_filter($data)]);
+            $comment = Comment::filter($filter)->paginate(4);
             return response()->json([
                 'comments' => $comment
             ], 200);
-        }catch (\Exception $e){
+        }catch (\Exception $error){
             return response()->json([
-                'massage' => 'Something went really wrong!'
+                'massage' => $error
             ], 500);
         }
     }
@@ -34,9 +38,9 @@ class CommentController extends Controller
             return response()->json([
                 'comments' => $comment
             ], 200);
-        }catch (\Exception $e){
+        }catch (\Exception $error){
             return response()->json([
-                'massage' => $e
+                'massage' => $error
             ], 500);
         }
     }
@@ -51,9 +55,9 @@ class CommentController extends Controller
             return response()->json([
                 'image' => $url_image
             ], 200);
-        }catch (\Exception $e){
+        }catch (\Exception $error){
             return response()->json([
-                'massage' => $e
+                'massage' => $error
             ], 500);
         }
     }

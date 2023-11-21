@@ -1,10 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, TextField, CardHeader, CardActions, Typography} from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import axios from "axios";
 import {useFormik} from 'formik';
 import {CKEditor} from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
 export default function AddCommentForm() {
     // Form validation function via formik
     const validate = values => {
@@ -86,7 +87,8 @@ export default function AddCommentForm() {
                         id="outlined-basic"
                         label="Enter your name"
                         variant="outlined"
-                        helperText={formik.errors.username ? <Typography className="text-danger">{formik.errors.username}</Typography> : null}
+                        helperText={formik.errors.username ?
+                            <Typography className="text-danger">{formik.errors.username}</Typography> : null}
                         type="text"
                         name="username"
                         onChange={formik.handleChange}
@@ -100,7 +102,8 @@ export default function AddCommentForm() {
                         id="outlined-basic"
                         label="Enter your email"
                         variant="outlined"
-                        helperText={formik.errors.email ? <Typography className="text-danger">{formik.errors.email}</Typography> : null}
+                        helperText={formik.errors.email ?
+                            <Typography className="text-danger">{formik.errors.email}</Typography> : null}
                         type="email"
                         name="email"
                         onChange={formik.handleChange}
@@ -130,10 +133,11 @@ export default function AddCommentForm() {
                         onChange={(event, editor) => {
                             const data = editor.getData();
                             setEditorText(data);
-                            }
+                        }
                         }
                     ></CKEditor>
-                    {formik.errors.text_content ? <Typography className="text-danger">{formik.errors.text_content}</Typography> : null}
+                    {formik.errors.text_content ?
+                        <Typography className="text-danger">{formik.errors.text_content}</Typography> : null}
                     <TextField
                         style={{display: 'none'}}
                         type="text"
@@ -160,7 +164,8 @@ export default function AddCommentForm() {
                         value={formik.values.captcha}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        helperText={formik.errors.captcha ? <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
+                        helperText={formik.errors.captcha ?
+                            <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
                     />
                 </div>
                 <Button variant="contained" type='submit'>Add comment</Button>
