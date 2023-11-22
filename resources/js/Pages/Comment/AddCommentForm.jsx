@@ -6,7 +6,7 @@ import {useFormik} from 'formik';
 import {CKEditor} from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-export default function AddCommentForm() {
+export default function AddCommentForm({visible, commentId}) {
     // Form validation function via formik
     const validate = values => {
         const errors = {};
@@ -59,6 +59,7 @@ export default function AddCommentForm() {
     // Formik function
     const formik = useFormik({
         initialValues: {
+            parent_id: '',
             username: '',
             email: '',
             home_url: '',
@@ -66,11 +67,13 @@ export default function AddCommentForm() {
             captcha: ''
         },
         onSubmit: values => {
+            // Post a request with the entered data via the form
             axios.post('http://localhost:8000/api/comments', JSON.stringify(values), {
                 headers: {
                     "Content-Type": "application/json"
                 }
             })
+            formik.resetForm();
         },
         validate: validate,
         validateOnBlur: false,
@@ -80,7 +83,14 @@ export default function AddCommentForm() {
     return (
         <>
             <form id="form-create-comment" className="addCommentForm" onSubmit={formik.handleSubmit}>
-                <CardHeader title="Add Comment" className="text-center"></CardHeader>
+                {visible
+                    ?false
+                    :<CardHeader title="Add Comment" className="text-center"></CardHeader>
+                }
+                {visible
+                    ?<div className="mb-3"><TextField style={{display: 'none'}} type="text" name="parent_id" onChange={formik.handleChange} value={formik.values.parent_id = commentId}></TextField></div>
+                    :false
+                }
                 <div className="mb-3">
                     <TextField
                         error={formik.errors.username ? true : false}

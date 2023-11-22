@@ -15,7 +15,7 @@ class CommentController extends Controller
         try {
             $data = $request->validated();
             $filter = app()->make(CommentFilter::class, ['queryParams' => array_filter($data)]);
-            $comment = Comment::filter($filter)->paginate(4);
+            $comment = Comment::filter($filter)->where('parent_id', null)->paginate(4);
             return response()->json([
                 'comments' => $comment
             ], 200);
@@ -30,11 +30,24 @@ class CommentController extends Controller
             $commentId = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
             $comment = Comment::create([
                 'comment_id' => $commentId,
+                'parent_id' => $request->parent_id,
                 'username' => $request->username,
                 'email' => $request->email,
                 'home_url' => $request->home_url,
                 'text_content' => $request->text_content
             ]);
+            return response()->json([
+                'comments' => $comment
+            ], 200);
+        }catch (\Exception $error){
+            return response()->json([
+                'massage' => $error
+            ], 500);
+        }
+    }
+    public function reply(){
+        try {
+            $comment = Comment::where('parent_id', '!=', null)->get();
             return response()->json([
                 'comments' => $comment
             ], 200);

@@ -8,10 +8,15 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import ReplyIcon from '@mui/icons-material/Reply';
+import AddCommentForm from "@/Pages/Comment/AddCommentForm.jsx";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export default function CommentBlock() {
     // Data with comments.
     const [data, setData] = useState([]);
+    // Data with reply.
+    const [reply, setReply] = useState([]);
     // Get the total number of pages.
     const [pageCount, setPageCount] = useState();
     // Substitute the value in the url to get the page you need.
@@ -20,6 +25,10 @@ export default function CommentBlock() {
     const [sortUsername, setSortUsername] = useState('null');
     // Value for filtering comments by Created_at
     const [sortDate, setSortDate] = useState('null');
+    // For a button that shows the form under the comment
+    const [showForm, setShowForm] = useState(false);
+    // For a button that shows the reply under the comment
+    const [showComment, setShowComment] = useState(false);
 
     // Function to change value sortUsername
     const handleChangeUser = (event) => {
@@ -42,6 +51,8 @@ export default function CommentBlock() {
 
     // Function for receiving data with comments.
     const handleOutput = async () => {
+
+        // Request Axios for comment
         await axios.get(
             'http://localhost:8000/api/comments?page=' + pageNumber
             + '&date=' + sortDate
@@ -52,12 +63,19 @@ export default function CommentBlock() {
                     setPageCount(data.data.comments.total);
                 }
             )
+
+        // Axios request for reply
+        await axios.get('http://localhost:8000/api/reply')
+            .then((data) => {
+                    setReply(data.data.comments);
+                }
+            )
     }
 
     // Divide the total number of posts by the number that can fit on one page (default - 25).
     const pagesArray = Math.ceil(pageCount / 4);
     // Substitute pagesArray into the getPage Array function.
-    const result = getPageArray(pagesArray);
+    const resultPage = getPageArray(pagesArray);
 
     // Function useEffect for updates.
     useEffect(() => {
@@ -105,24 +123,49 @@ export default function CommentBlock() {
                             <div className="mt-2">
                                 {parse(item.text_content)}
                             </div>
-                            <div className="mt-3">
-                                <Button><ReplyIcon /> Reply</Button>
+                            <div className="mt-3 mb-3">
+                                <Button onClick={() => {showForm === item.comment_id ? setShowForm(false) : setShowForm(item.comment_id)}}>
+                                    <ReplyIcon/>
+                                    Reply
+                                </Button>
+                                <Button onClick={() => {showComment === item.comment_id ? setShowComment(false) : setShowComment(item.comment_id)}}>
+                                    {showComment === item.comment_id ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
+                                    Show
+                                </Button>
                             </div>
-                            <div className='mt-3 commentReply' style={{display:'none'}}>
-                                <div className="mt-10">
-                                    <div className="flex comment items-center">
-                                        <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
-                                        <h2 className="mr-3">guest</h2>
-                                        <p className="mr-5">21.11.2023 в 15:41</p>
-                                    </div>
-                                    <div className="mt-2">
-                                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                    </div>
-                                    <div className="mt-3">
-                                        <Button><ReplyIcon/>Reply</Button>
-                                    </div>
+                            <div style={{marginLeft: '50px'}}>
+                                {showForm === item.comment_id
+                                    ?<AddCommentForm visible={true} commentId={item.comment_id}/>
+                                    :false
+                                }
+                            </div>
+                            {showComment === item.comment_id
+                                ?<div style={{marginLeft: '50px'}}>
+                                    {reply.map((items, index) => {
+                                        return(
+                                                <div key={index}>
+                                                    {items.parent_id === item.comment_id
+                                                        ?<div className='mt-3 commentReply'>
+                                                            <div className="mt-5">
+                                                                <div className="flex comment items-center">
+                                                                    <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
+                                                                    <h2 className="mr-3">{items.username}</h2>
+                                                                    <p className="mr-5">{items.created_at}</p>
+                                                                </div>
+                                                                <div className="mt-2">
+                                                                    {parse(items.text_content)}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        :false
+                                                    }
+                                                </div>
+                                            );
+                                        })
+                                    }
                                 </div>
-                            </div>
+                                :false
+                            }
                         </div>
                     );
                 })
@@ -130,12 +173,7 @@ export default function CommentBlock() {
                 <div className="mt-8 flex justify-center">
                     <nav aria-label="pagination navigation" className="MuiPagination-root MuiPagination-text css-1oj2twp-MuiPagination-root">
                         <ul className="MuiPagination-ul css-wjh20t-MuiPagination-ul">
-                            <li>
-                                <button className="MuiButtonBase-root Mui-disabled MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary Mui-disabled MuiPaginationItem-previousNext css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root" tabIndex="-1" type="button" disabled="" aria-label="Go to previous page">
-                                    <svg className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiPaginationItem-icon css-g2z002-MuiSvgIcon-root-MuiPaginationItem-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="NavigateBeforeIcon"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
-                                </button>
-                            </li>
-                            {result.map((item) => {
+                            {resultPage.map((item) => {
                                 return(
                                     <li key={item}>
                                         <button onClick={() => setPageNumber(item)} className={pageNumber === item ? "MuiButtonBase-root MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary MuiPaginationItem-page css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root .css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root Mui-selected" : "MuiButtonBase-root MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary MuiPaginationItem-page css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root .css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root"} type="button">
@@ -145,11 +183,6 @@ export default function CommentBlock() {
                                 );
                             })
                             }
-                            <li>
-                                <button className="MuiButtonBase-root MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary MuiPaginationItem-previousNext css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root" tabIndex="0" type="button" aria-label="Go to next page">
-                                    <svg className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiPaginationItem-icon css-g2z002-MuiSvgIcon-root-MuiPaginationItem-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="NavigateNextIcon"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg><span className="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"></span>
-                                </button>
-                            </li>
                         </ul>
                     </nav>
                     <Pagination style={{display: 'none'}} color="primary" />

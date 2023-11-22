@@ -20,5 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/comments', [CommentController::class, 'index']);
+Route::get('/reply', [CommentController::class, 'reply']);
 Route::post('/comments', [CommentController::class, 'store']);
 Route::post('/upload', [CommentController::class, 'uploadImage']);

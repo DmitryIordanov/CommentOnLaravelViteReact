@@ -24,6 +24,7 @@ class CommentRequest extends FormRequest
         if(request()->isMethod('post')){
             return [
                 'comment_id' => 'string',
+                'parent_id' => '',
                 'username' => 'required|string',
                 'email' => 'required|string',
                 'home_url' => 'nullable|string',
@@ -32,6 +33,7 @@ class CommentRequest extends FormRequest
         }else{
             return [
                 'comment_id' => 'string',
+                'parent_id' => '',
                 'username' => 'required|string',
                 'email' => 'required|string',
                 'home_url' => 'nullable|string',
