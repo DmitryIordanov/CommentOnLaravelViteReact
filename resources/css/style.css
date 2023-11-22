@@ -40,3 +40,7 @@ a{
 .commentBlock .comment h2{
     font-weight: bold;
 }
+.commentReply{
+    margin-left: 50px;
+    width: 700px;
+}

@@ -6,34 +6,29 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CommentFilter extends AbstractFilter
 {
-    public const OLD_COMMENT = 'old';
-    public const LATEST_COMMENT = 'latest';
-    public const RANDOM_COMMENT = 'random';
-
+    public const DATE_COMMENT = 'date';
+    public const USERNAME_COMMENT = 'username';
 
     protected function getCallbacks(): array{
         return [
-            self::OLD_COMMENT => [$this, 'old_comment'],
-            self::LATEST_COMMENT => [$this, 'latest_comment'],
-            self::RANDOM_COMMENT => [$this, 'random_comment'],
+            self::DATE_COMMENT => [$this, 'date_comment'],
+            self::USERNAME_COMMENT => [$this, 'username_comment'],
         ];
     }
 
-    public function old_comment(Builder $builder, $value){
-        if ($value === 'old'){
-            $builder->first();
-        }
-    }
-
-    public function latest_comment(Builder $builder, $value){
-        if ($value === 'latest') {
+    public function date_comment(Builder $builder, $value){
+        if ($value === 'latest'){
             $builder->orderBy('created_at', 'desc');
+        } else if ($value === 'random'){
+            $builder->inRandomOrder();
         }
     }
 
-    public function random_comment(Builder $builder, $value){
-        if ($value === 'random') {
-            $builder->inRandomOrder();
+    public function username_comment(Builder $builder, $value){
+        if ($value === 'alphabet') {
+            $builder->orderBy('username')->get();
+        } else if ($value === 'alphabetback'){
+            $builder->orderBy('username', 'desc')->get();
         }
     }
 }

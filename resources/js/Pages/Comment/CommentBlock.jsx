@@ -7,6 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import ReplyIcon from '@mui/icons-material/Reply';
 
 export default function CommentBlock() {
     // Data with comments.
@@ -15,14 +16,17 @@ export default function CommentBlock() {
     const [pageCount, setPageCount] = useState();
     // Substitute the value in the url to get the page you need.
     const [pageNumber, setPageNumber] = useState();
-
+    // Value for filtering comments by Username
     const [sortUsername, setSortUsername] = useState('null');
-
+    // Value for filtering comments by Created_at
     const [sortDate, setSortDate] = useState('null');
 
+    // Function to change value sortUsername
     const handleChangeUser = (event) => {
         setSortUsername(event.target.value);
     };
+
+    // Function to change value sortDate
     const handleChangesDate = (event) => {
         setSortDate(event.target.value);
     };
@@ -40,9 +44,8 @@ export default function CommentBlock() {
     const handleOutput = async () => {
         await axios.get(
             'http://localhost:8000/api/comments?page=' + pageNumber
-            + '&old=' + sortDate
-            + '&latest=' + sortDate
-            + '&random=' + sortDate
+            + '&date=' + sortDate
+            + '&username=' + sortUsername
         )
             .then((data) => {
                     setData(data.data.comments.data);
@@ -59,7 +62,7 @@ export default function CommentBlock() {
     // Function useEffect for updates.
     useEffect(() => {
         handleOutput()
-    },[pageNumber, sortDate]);
+    },[pageNumber, sortDate, sortUsername]);
     return(
         <>
             <div className="mt-5">
@@ -72,7 +75,8 @@ export default function CommentBlock() {
                         onChange={handleChangeUser}
                     >
                         <MenuItem value="null"><em>None</em></MenuItem>
-                        <MenuItem value="Ten">Alphabet</MenuItem>
+                        <MenuItem value="alphabet">Alphabet</MenuItem>
+                        <MenuItem value="alphabetback">Desc</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl variant="filled" sx={{m: 1, minWidth: 130}}>
@@ -85,7 +89,6 @@ export default function CommentBlock() {
                     >
                         <MenuItem value="null"><em>None</em></MenuItem>
                         <MenuItem value="random">Random</MenuItem>
-                        <MenuItem value="old">Old</MenuItem>
                         <MenuItem value="latest">Latest</MenuItem>
                     </Select>
                 </FormControl>
@@ -98,10 +101,27 @@ export default function CommentBlock() {
                                 <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
                                 <h2 className="mr-3">{item.username}</h2>
                                 <p className="mr-5">{item.created_at}</p>
-                                <Button className="ml-auto">Reply</Button>
                             </div>
                             <div className="mt-2">
                                 {parse(item.text_content)}
+                            </div>
+                            <div className="mt-3">
+                                <Button><ReplyIcon /> Reply</Button>
+                            </div>
+                            <div className='mt-3 commentReply' style={{display:'none'}}>
+                                <div className="mt-10">
+                                    <div className="flex comment items-center">
+                                        <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
+                                        <h2 className="mr-3">guest</h2>
+                                        <p className="mr-5">21.11.2023 в 15:41</p>
+                                    </div>
+                                    <div className="mt-2">
+                                        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                                    </div>
+                                    <div className="mt-3">
+                                        <Button><ReplyIcon/>Reply</Button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     );

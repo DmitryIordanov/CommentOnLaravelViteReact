@@ -22,9 +22,8 @@ class FilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'old' => 'string',
-            'latest' => 'string',
-            'random' => 'string'
+            'date' => 'string',
+            'username' => 'string'
         ];
     }
 }
