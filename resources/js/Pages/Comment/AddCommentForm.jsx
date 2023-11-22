@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button, TextField, CardHeader, CardActions, Typography} from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import axios from "axios";
@@ -81,105 +81,103 @@ export default function AddCommentForm({visible, commentId}) {
         validateOnMount: false
     });
     return (
-        <>
-            <form id="form-create-comment" className="addCommentForm" onSubmit={formik.handleSubmit}>
-                {visible
-                    ?false
-                    :<CardHeader title="Add Comment" className="text-center"></CardHeader>
-                }
-                {visible
-                    ?<div className="mb-3"><TextField style={{display: 'none'}} type="text" name="parent_id" onChange={formik.handleChange} value={formik.values.parent_id = commentId}></TextField></div>
-                    :false
-                }
-                <div className="mb-3">
-                    <TextField
-                        error={formik.errors.username ? true : false}
-                        id="outlined-basic"
-                        label="Enter your name"
-                        variant="outlined"
-                        helperText={formik.errors.username ?
-                            <Typography className="text-danger">{formik.errors.username}</Typography> : null}
-                        type="text"
-                        name="username"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.username}
-                    ></TextField>
-                </div>
-                <div className="mb-3">
-                    <TextField
-                        error={formik.errors.email ? true : false}
-                        id="outlined-basic"
-                        label="Enter your email"
-                        variant="outlined"
-                        helperText={formik.errors.email ?
-                            <Typography className="text-danger">{formik.errors.email}</Typography> : null}
-                        type="email"
-                        name="email"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.email}
-                    ></TextField>
-                </div>
-                <div className="mb-3">
-                    <TextField
-                        id="outlined-basic"
-                        label="Url home page"
-                        variant="outlined"
-                        type="text"
-                        name="home_url"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.home_url}
-                    ></TextField>
-                </div>
-                <div className="editor">
-                    <CKEditor
-                        editor={ClassicEditor}
-                        data={text}
-                        config={{
-                            toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'imageUpload', 'link']
-                        }}
-                        onChange={(event, editor) => {
+        <form id="form-create-comment" className="addCommentForm" onSubmit={formik.handleSubmit}>
+            {visible
+                ? false
+                : <CardHeader title="Add Comment" className="text-center"></CardHeader>
+            }
+            {visible
+                ? <div className="mb-3"><TextField style={{display: 'none'}} type="text" name="parent_id" onChange={formik.handleChange} value={formik.values.parent_id = commentId}></TextField></div>
+                : false
+            }
+            <div className="mb-3">
+                <TextField
+                    error={formik.errors.username ? true : false}
+                    id="outlined-basic"
+                    label="Enter your name"
+                    variant="outlined"
+                    helperText={formik.errors.username ?
+                        <Typography className="text-danger">{formik.errors.username}</Typography> : null}
+                    type="text"
+                    name="username"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.username}
+                ></TextField>
+            </div>
+            <div className="mb-3">
+                <TextField
+                    error={formik.errors.email ? true : false}
+                    id="outlined-basic"
+                    label="Enter your email"
+                    variant="outlined"
+                    helperText={formik.errors.email ?
+                        <Typography className="text-danger">{formik.errors.email}</Typography> : null}
+                    type="email"
+                    name="email"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.email}
+                ></TextField>
+            </div>
+            <div className="mb-3">
+                <TextField
+                    id="outlined-basic"
+                    label="Url home page"
+                    variant="outlined"
+                    type="text"
+                    name="home_url"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.home_url}
+                ></TextField>
+            </div>
+            <div className="editor">
+                <CKEditor
+                    editor={ClassicEditor}
+                    data={text}
+                    config={{
+                        toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'imageUpload', 'link']
+                    }}
+                    onChange={(event, editor) => {
                             const data = editor.getData();
                             setEditorText(data);
                         }
-                        }
-                    ></CKEditor>
-                    {formik.errors.text_content ?
-                        <Typography className="text-danger">{formik.errors.text_content}</Typography> : null}
-                    <TextField
-                        style={{display: 'none'}}
-                        type="text"
-                        name="text_content"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.text_content = editorText}
-                    ></TextField>
-                </div>
-                <div className="mb-5">
-                    <CardActions>
-                        <Button
-                            startIcon={<RefreshIcon/>}
-                            onClick={() => refreshString()}
-                        ></Button>
-                        <div className="h3">{isCaptcha}</div>
-                    </CardActions>
-                    <TextField
-                        error={formik.errors.captcha ? true : false}
-                        type="text"
-                        className="w-60"
-                        label="Enter Captcha"
-                        name="captcha"
-                        value={formik.values.captcha}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        helperText={formik.errors.captcha ?
-                            <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
-                    />
-                </div>
-                <Button variant="contained" type='submit'>Add comment</Button>
-            </form>
-        </>
+                    }
+                ></CKEditor>
+                {formik.errors.text_content ?
+                    <Typography className="text-danger">{formik.errors.text_content}</Typography> : null}
+                <TextField
+                    style={{display: 'none'}}
+                    type="text"
+                    name="text_content"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.text_content = editorText}
+                ></TextField>
+            </div>
+            <div className="mb-5">
+                <CardActions>
+                    <Button
+                        startIcon={<RefreshIcon/>}
+                        onClick={() => refreshString()}
+                    ></Button>
+                    <div className="h3">{isCaptcha}</div>
+                </CardActions>
+                <TextField
+                    error={formik.errors.captcha ? true : false}
+                    type="text"
+                    className="w-60"
+                    label="Enter Captcha"
+                    name="captcha"
+                    value={formik.values.captcha}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    helperText={formik.errors.captcha ?
+                        <Typography className="text-danger">{formik.errors.captcha}</Typography> : null}
+                />
+            </div>
+            <Button variant="contained" type='submit'>Add comment</Button>
+        </form>
     );
 }

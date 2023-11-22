@@ -20,7 +20,7 @@ export default function CommentBlock() {
     // Get the total number of pages.
     const [pageCount, setPageCount] = useState();
     // Substitute the value in the url to get the page you need.
-    const [pageNumber, setPageNumber] = useState();
+    const [pageNumber, setPageNumber] = useState(1);
     // Value for filtering comments by Username
     const [sortUsername, setSortUsername] = useState('null');
     // Value for filtering comments by Created_at
@@ -29,6 +29,8 @@ export default function CommentBlock() {
     const [showForm, setShowForm] = useState(false);
     // For a button that shows the reply under the comment
     const [showComment, setShowComment] = useState(false);
+    // Divide the total number of posts by the number that can fit on one page (default - 25).
+    const pagesTotal = Math.ceil(pageCount / 4);
 
     // Function to change value sortUsername
     const handleChangeUser = (event) => {
@@ -40,14 +42,11 @@ export default function CommentBlock() {
         setSortDate(event.target.value);
     };
 
-    // Function to create an array from pageCount.
-    const getPageArray = (totalPage) => {
-        const result = [];
-        for (let i = 0; i < totalPage; i++) {
-            result.push(i + 1);
-        }
-        return result;
-    }
+    // Function to change value pageNumber
+    const handleChangePaginate = (event, value) => {
+        setPageNumber(value);
+    };
+
 
     // Function for receiving data with comments.
     const handleOutput = async () => {
@@ -71,11 +70,6 @@ export default function CommentBlock() {
                 }
             )
     }
-
-    // Divide the total number of posts by the number that can fit on one page (default - 25).
-    const pagesArray = Math.ceil(pageCount / 4);
-    // Substitute pagesArray into the getPage Array function.
-    const resultPage = getPageArray(pagesArray);
 
     // Function useEffect for updates.
     useEffect(() => {
@@ -171,21 +165,7 @@ export default function CommentBlock() {
                 })
                 }
                 <div className="mt-8 flex justify-center">
-                    <nav aria-label="pagination navigation" className="MuiPagination-root MuiPagination-text css-1oj2twp-MuiPagination-root">
-                        <ul className="MuiPagination-ul css-wjh20t-MuiPagination-ul">
-                            {resultPage.map((item) => {
-                                return(
-                                    <li key={item}>
-                                        <button onClick={() => setPageNumber(item)} className={pageNumber === item ? "MuiButtonBase-root MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary MuiPaginationItem-page css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root .css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root Mui-selected" : "MuiButtonBase-root MuiPaginationItem-root MuiPaginationItem-sizeMedium MuiPaginationItem-text MuiPaginationItem-circular MuiPaginationItem-textPrimary MuiPaginationItem-page css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root .css-1to7aaw-MuiButtonBase-root-MuiPaginationItem-root"} type="button">
-                                            {item}
-                                        </button>
-                                    </li>
-                                );
-                            })
-                            }
-                        </ul>
-                    </nav>
-                    <Pagination style={{display: 'none'}} color="primary" />
+                    <Pagination className="mb-10" page={pageNumber} count={pagesTotal || 1} onChange={handleChangePaginate} size='large' color="primary" />
                 </div>
             </div>
         </>
