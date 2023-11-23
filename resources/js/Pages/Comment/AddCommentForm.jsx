@@ -137,7 +137,7 @@ export default function AddCommentForm({visible, commentId}) {
                     editor={ClassicEditor}
                     data={text}
                     config={{
-                        toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'imageUpload', 'link']
+                        toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'link']
                     }}
                     onChange={(event, editor) => {
                             const data = editor.getData();

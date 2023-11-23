@@ -11,11 +11,12 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    // The index function returns the main comments
     public function index(FilterRequest $request){
         try {
             $data = $request->validated();
             $filter = app()->make(CommentFilter::class, ['queryParams' => array_filter($data)]);
-            $comment = Comment::filter($filter)->where('parent_id', null)->paginate(4);
+            $comment = Comment::filter($filter)->where('parent_id', null)->paginate(25);
             return response()->json([
                 'comments' => $comment
             ], 200);
@@ -25,6 +26,8 @@ class CommentController extends Controller
             ], 500);
         }
     }
+
+    // The store function receives data via the API and stores it in the db
     public function store(CommentRequest $request){
         try {
             $commentId = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 8);
@@ -45,6 +48,8 @@ class CommentController extends Controller
             ], 500);
         }
     }
+
+    // The reply function returns only replies to comments
     public function reply(){
         try {
             $comment = Comment::where('parent_id', '!=', null)->get();
@@ -57,6 +62,8 @@ class CommentController extends Controller
             ], 500);
         }
     }
+
+    // Unimplemented image saving function
     public function uploadImage(Request $request){
         try {
             $fileName = time().$request->file('image')->getClientOriginalName();

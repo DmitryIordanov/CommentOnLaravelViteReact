@@ -14,7 +14,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export default function CommentBlock() {
     // Data with comments.
-    const [data, setData] = useState([]);
+    const [isData, setIsData] = useState([]);
     // Data with reply.
     const [reply, setReply] = useState([]);
     // Get the total number of pages.
@@ -30,7 +30,7 @@ export default function CommentBlock() {
     // For a button that shows the reply under the comment
     const [showComment, setShowComment] = useState(false);
     // Divide the total number of posts by the number that can fit on one page (default - 25).
-    const pagesTotal = Math.ceil(pageCount / 4);
+    const pagesTotal = Math.ceil(pageCount / 25);
 
     // Function to change value sortUsername
     const handleChangeUser = (event) => {
@@ -58,7 +58,7 @@ export default function CommentBlock() {
             + '&username=' + sortUsername
         )
             .then((data) => {
-                    setData(data.data.comments.data);
+                    setIsData(data.data.comments.data);
                     setPageCount(data.data.comments.total);
                 }
             )
@@ -106,11 +106,11 @@ export default function CommentBlock() {
                 </FormControl>
             </div>
             <div className="commentWrap">
-                {data.map((item, index) => {
+                {isData.map((item, index) => {
                     return(
                         <div className="mt-10 commentBlock" key={item.comment_id}>
                             <div className="flex comment items-center">
-                                <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
+                                <img src="https://cdn-icons-png.flaticon.com/512/9385/9385289.png" className="mr-4" width="50" alt=""/>
                                 <h2 className="mr-3">{item.username}</h2>
                                 <p className="mr-5">{item.created_at}</p>
                             </div>
@@ -142,7 +142,7 @@ export default function CommentBlock() {
                                                         ?<div className='mt-3 commentReply'>
                                                             <div className="mt-5">
                                                                 <div className="flex comment items-center">
-                                                                    <img src="https://www.freeiconspng.com/thumbs/person-icon/person-icon-8.png" className="mr-4" width="50" alt=""/>
+                                                                    <img src="https://cdn-icons-png.flaticon.com/512/9385/9385289.png" className="mr-4" width="50" alt=""/>
                                                                     <h2 className="mr-3">{items.username}</h2>
                                                                     <p className="mr-5">{items.created_at}</p>
                                                                 </div>
@@ -165,7 +165,17 @@ export default function CommentBlock() {
                 })
                 }
                 <div className="mt-8 flex justify-center">
-                    <Pagination className="mb-10" page={pageNumber} count={pagesTotal || 1} onChange={handleChangePaginate} size='large' color="primary" />
+                    <Pagination
+                        className="mb-10"
+                        page={pageNumber}
+                        count={pagesTotal || 1}
+                        onChange={handleChangePaginate}
+                        size='large'
+                        color="primary"
+                        shape="rounded"
+                        showFirstButton
+                        showLastButton
+                    />
                 </div>
             </div>
         </>
